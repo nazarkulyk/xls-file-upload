@@ -1,18 +1,17 @@
-import { get, head, filter, map, keys, each, merge, pick, omit, set, startsWith, values, replace, mapKeys, camelCase } from 'lodash';
+import { get, head, filter, map, keys, each, merge, pick, omit, startsWith, values, replace, mapKeys, camelCase } from 'lodash';
 
 export class Aggregation {
   // eslint-disable-next-line @typescript-eslint/ban-types
   public static parse(entries: any[], options: object): any[] {
     return map(entries, (entry) => {
-      let newEntry = {};
+      let transformed = { ...entry };
       each(keys(options), (key) => {
         const opt = get(options, key);
         const fns = keys(opt);
         const fn = head(fns);
-        const transformed = get(Aggregation, fn)(entry, key, get(opt, fn));
-        newEntry = merge(newEntry, transformed);
+        transformed = get(Aggregation, fn)(transformed, key, get(opt, fn));
       });
-      const result = newEntry;
+      const result = transformed;
       return result;
     });
   }

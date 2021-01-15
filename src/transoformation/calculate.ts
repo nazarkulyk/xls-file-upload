@@ -1,11 +1,21 @@
-import { get, map, keys, transform, set } from 'lodash';
+import { get, map, keys, transform, set, isFunction } from 'lodash';
 import { divide, times } from 'number-precision';
 
 export class Calculate {
   // eslint-disable-next-line @typescript-eslint/ban-types
   public static parse(entries: any[], options: object): any[] {
     return map(entries, (entry) => {
-      const extension = transform(keys(options), (result, key) => set(result, key, get(Calculate, get(options, key))(key, entry)), {});
+      const extension = transform(
+        keys(options),
+        (result, key) => {
+          const fn = get(options, key);
+          if (isFunction(fn)) {
+            return set(result, key, fn(key, entry));
+          }
+          return set(result, key, get(Calculate, get(options, key))(key, entry));
+        },
+        {}
+      );
 
       return { ...entry, ...extension };
     });

@@ -36,7 +36,7 @@ export abstract class UploadService {
       const { type, valide, data } = await this.validateFilePart(part);
       if (valide) {
         const count = await this.importDBData(type, data, false);
-        return { file: part.originalname, valide, type, count };
+        return { file: part.originalname, valide, type, count, data };
       }
       return { file: part.originalname, valide, type };
     }

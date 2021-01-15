@@ -4,6 +4,8 @@ export const DEFAULT_MAPPING_TYPES = {
 
 export type DEFAULT_MAPPING_TYPES = typeof DEFAULT_MAPPING_TYPES[keyof typeof DEFAULT_MAPPING_TYPES];
 
+type fn = (key?: string, data?: Record<string, unknown>) => unknown;
+
 export type ConfigDataMapping = {
   fileName: string;
   outputFile: string;
@@ -34,7 +36,7 @@ export type ConfigDataMapping = {
     [key: string]: string;
   };
   calculate?: {
-    [key: string]: string;
+    [key: string]: string | fn;
   };
   mergeWith?: Record<string, unknown>;
 };
