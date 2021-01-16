@@ -1,6 +1,6 @@
 {
   "name": "@nazarkulyk/xls-file-upload",
-  "version": "0.9.4",
+  "version": "1.0.0",
   "main": "build/index.js",
   "module": "build/index.es.js",
   "source": "src/index.ts",
@@ -19,9 +19,8 @@
     "clean": "npm run -s clean:build && npm run -s clean:build:cache",
     "prepublishOnly": "npm run build-micro",
     "build": "npm run clean && tsc",
-    "watch": "tsc -w",
     "build-micro": "npm run clean && microbundle --no-compress --target node --format es,cjs",
-    "watch-micro": "npm run clean && microbundle watch --no-compress --target node --format es,cjs"
+    "watch": "npm run clean && microbundle watch --no-compress --target node --format es,cjs"
   },
   "devDependencies": {
     "@types/multer": "^1.4.5",

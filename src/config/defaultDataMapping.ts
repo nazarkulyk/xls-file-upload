@@ -4,7 +4,9 @@ export const DEFAULT_MAPPING_TYPES = {
 
 export type DEFAULT_MAPPING_TYPES = typeof DEFAULT_MAPPING_TYPES[keyof typeof DEFAULT_MAPPING_TYPES];
 
-type fn = (key?: string, data?: Record<string, unknown>) => unknown;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type fn = (key?: string, data?: any) => unknown;
+export type MoveFn = (entry: any, key: string) => any;
 
 export type ConfigDataMapping = {
   fileName: string;
@@ -39,6 +41,9 @@ export type ConfigDataMapping = {
     [key: string]: string | fn;
   };
   mergeWith?: Record<string, unknown>;
+  move?: {
+    [key: string]: { [key: string]: string } | MoveFn;
+  };
 };
 
 export type DefaultConfigDataMappings<T extends DEFAULT_MAPPING_TYPES> = {

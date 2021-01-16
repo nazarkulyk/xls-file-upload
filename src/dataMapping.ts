@@ -1,5 +1,5 @@
 import { get, isEmpty, map, mapKeys, flatten, filter, compact, reject, values, every, isNil } from 'lodash';
-import { Mappings, Translation, Aggregation, Decomposition, Util, Calculate } from './transoformation';
+import { Mappings, Translation, Aggregation, Decomposition, Util, Calculate, Move } from './transoformation';
 import type { ConfigDataMapping } from './config/defaultDataMapping';
 
 export interface FileOptions {
@@ -37,7 +37,8 @@ export class DataMapping {
         ? map(cusomeDecomposited, (i) => ({ ...i, ...transformationPart.mergeWith }))
         : cusomeDecomposited;
       const calculated = transformationPart.calculate ? Calculate.parse(merged, transformationPart.calculate) : merged;
-      return calculated;
+      const moved = transformationPart.move ? Move.parse(calculated, transformationPart.move) : calculated;
+      return moved;
     } catch (e) {
       console.error(e);
       throw new Error(e);

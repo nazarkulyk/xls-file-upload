@@ -1,4 +1,25 @@
-import { get, flatten, cloneDeep, map, merge, keys, omit, pick, set, split, trim, transform, spread, update, unzip, zip } from 'lodash';
+import {
+  get,
+  flatten,
+  cloneDeep,
+  map,
+  merge,
+  keys,
+  omit,
+  pick,
+  set,
+  split,
+  trim,
+  transform,
+  spread,
+  update,
+  unzip,
+  zip,
+  head,
+  words,
+  tail,
+  join
+} from 'lodash';
 import { Mappings } from './mappings';
 
 const TRANS_PROPERTY = '.translations';
@@ -12,10 +33,13 @@ export class Decomposition {
     // console.log("decomposition", options);
     const columns = keys(options);
 
+    // console.log('decomposition', options, entries);
+
     return map(entries, (entry) => {
       const list = spread(merge)(
         map(columns, (column) => {
           const fn = get(options, column);
+          // console.log('decomposition', entry, column);
           return get(Decomposition, fn)(pick(entry, column), column);
         })
       );
@@ -26,6 +50,16 @@ export class Decomposition {
 
   public static splitByComa(data: string): string[] {
     return map(split(data, ','), trim);
+  }
+
+  public static splitName(data: string, key: string): Record<string, any> {
+    const value = map(words(get(data, `${key}.name`)), trim);
+    return {
+      [key]: {
+        firstName: head(value),
+        lastName: join(tail(value), ' ')
+      }
+    };
   }
 
   public static default<T extends Record<string, unknown>>(obj: T, key: string): T {
