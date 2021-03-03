@@ -98,7 +98,6 @@ export class SheetBufferToJson {
         r: originalRange.e.r > 1024 ? 1024 : originalRange.e.r
       }
     };
-    console.log('range', range);
     const sheetData = utils.sheet_to_json(this.workBook.Sheets[sheetName], {
       range,
       blankrows: true,
