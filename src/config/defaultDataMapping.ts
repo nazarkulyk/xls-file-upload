@@ -4,6 +4,9 @@ export const DEFAULT_MAPPING_TYPES = {
 
 export type DEFAULT_MAPPING_TYPES = typeof DEFAULT_MAPPING_TYPES[keyof typeof DEFAULT_MAPPING_TYPES];
 
+export const MAX_XSLS_COLUMNS = 256;
+export const MAX_XSLS_ROWS = 2048;
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type fn = (key?: string, data?: any) => unknown;
 export type MoveFn = (entry: any, key: string) => any;

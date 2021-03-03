@@ -1,6 +1,6 @@
-import { read, WorkBook, utils } from 'xlsx';
-import { get, drop, difference, map, every, find, includes, keys, transform, union } from 'lodash';
-import { ConfigDataMappings, DEFAULT_MAPPING_TYPES } from '../config';
+import { read, WorkBook, utils, Range } from 'xlsx';
+import { get, drop, difference, every, find, includes, keys, transform, compact, head } from 'lodash';
+import { ConfigDataMappings, DEFAULT_MAPPING_TYPES, MAX_XSLS_COLUMNS, MAX_XSLS_ROWS } from '../config';
 import { DetectRule, DetectProfile } from '../models/detect';
 
 export class SheetBufferToJson {
@@ -43,8 +43,20 @@ export class SheetBufferToJson {
       throw new Error('Cant convert Sheet to JSON before validation!');
     }
     const { sheetName, dataStart, keysRow } = find(this.DetectMatch, ['type', this.Type]);
+    const originalRange = utils.decode_range(this.workBook.Sheets[sheetName]['!ref']);
+    const range = {
+      s: {
+        c: 0,
+        r: keysRow
+      },
+      e: {
+        c: originalRange.e.c > 120 ? 120 : originalRange.e.c,
+        r: originalRange.e.r > 1024 ? 1024 : originalRange.e.r
+      }
+    };
     const data = utils.sheet_to_json(this.workBook.Sheets[sheetName], {
-      range: keysRow
+      range,
+      defval: undefined
     });
     return dataStart > 0 ? drop(data, dataStart) : data;
   }
@@ -75,15 +87,26 @@ export class SheetBufferToJson {
   }
 
   private checkDetectRule(sheetName: string, keysRow: number, rule: DetectRule): boolean {
+    const originalRange = utils.decode_range(this.workBook.Sheets[sheetName]['!ref']);
+    const range = {
+      s: {
+        c: 0,
+        r: keysRow
+      },
+      e: {
+        c: originalRange.e.c > 120 ? 120 : originalRange.e.c,
+        r: originalRange.e.r > 1024 ? 1024 : originalRange.e.r
+      }
+    };
+    console.log('range', range);
     const sheetData = utils.sheet_to_json(this.workBook.Sheets[sheetName], {
-      range: keysRow,
-      blankrows: true
+      range,
+      blankrows: true,
+      defval: undefined
     });
-    const allheaders = map(sheetData, keys);
-    console.log('allheaders', allheaders);
-    const columns = union(...allheaders);
+    const columns = compact(keys(head(sheetData)));
 
-    console.debug('detection', sheetName, keysRow, columns);
+    // console.debug('detection', sheetName, keysRow, columns, keysRow);
 
     const { fields } = rule;
 
@@ -98,5 +121,19 @@ export class SheetBufferToJson {
       console.error('difference: ', difference(fields, columns));
     }
     return result;
+  }
+
+  public createRange(sheetName: string, keysRow: number): Range {
+    const originalRange = utils.decode_range(this.workBook.Sheets[sheetName]['!ref']);
+    return {
+      s: {
+        c: 0,
+        r: keysRow
+      },
+      e: {
+        c: originalRange.e.c > MAX_XSLS_COLUMNS ? MAX_XSLS_COLUMNS : originalRange.e.c,
+        r: originalRange.e.r > MAX_XSLS_ROWS ? MAX_XSLS_ROWS : originalRange.e.r
+      }
+    };
   }
 }
