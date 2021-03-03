@@ -80,10 +80,10 @@ export class SheetBufferToJson {
       blankrows: true
     });
     const allheaders = map(sheetData, keys);
-    // console.log(allheaders);
+    console.log('allheaders', allheaders);
     const columns = union(...allheaders);
 
-    // console.debug('detection', sheetName, keysRow, columns);
+    console.debug('detection', sheetName, keysRow, columns);
 
     const { fields } = rule;
 
