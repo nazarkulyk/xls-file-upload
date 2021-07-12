@@ -4,3 +4,4 @@ export * from './utils';
 export * from './models';
 export * from './dataMapping';
 export * from './upload';
+export * from './readfile';

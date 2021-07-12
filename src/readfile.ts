@@ -4,22 +4,12 @@ import { SheetBufferToJson } from './utils/sheetBufferToJson';
 import { DataMapping } from './dataMapping';
 import { FileUploadResult } from './models/fileUpload';
 
-export interface UploadServiceOptions {
-  mimeTypes: string[];
-}
-
 export abstract class ReadFileService {
   private transform = DataMapping;
 
   private transformations: ConfigDataMappings;
 
   private sheetService: SheetBufferToJson;
-
-  private mimeTypes: string[];
-
-  constructor({ mimeTypes }: UploadServiceOptions) {
-    this.mimeTypes = mimeTypes;
-  }
 
   public async parseFile(file: File): Promise<FileUploadResult> {
     const { type, valide, data } = await this.validateFilePart(file);
