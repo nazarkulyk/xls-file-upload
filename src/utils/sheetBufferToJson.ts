@@ -1,4 +1,4 @@
-import { read, WorkBook, utils, Range } from 'xlsx';
+import { read, WorkBook, utils, Range, readFile } from 'xlsx';
 import { get, drop, difference, every, find, includes, keys, transform, compact, head } from 'lodash';
 import { ConfigDataMappings, DEFAULT_MAPPING_TYPES, MAX_XSLS_COLUMNS, MAX_XSLS_ROWS } from '../config';
 import { DetectRule, DetectProfile } from '../models/detect';
@@ -14,10 +14,10 @@ export class SheetBufferToJson {
 
   private Type: string = DEFAULT_MAPPING_TYPES.Unknown;
 
-  public constructor(buf: Buffer, transformations: ConfigDataMappings) {
+  public constructor(buf: Buffer | File, transformations: ConfigDataMappings) {
     this.transformations = transformations;
     this.DetectMatch = this.transformDetection();
-    this.workBook = read(buf);
+    this.workBook = buf instanceof Buffer ? read(buf) : readFile(buf.name);
   }
 
   private transformDetection(): DetectProfile[] {
