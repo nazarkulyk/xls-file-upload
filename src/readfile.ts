@@ -11,30 +11,30 @@ export abstract class ReadFileService {
 
   private sheetService: SheetBufferToJson;
 
-  public async parseFile(file: File): Promise<FileUploadResult> {
-    const { type, valide, data } = await this.validateFilePart(file);
+  public async parseFile(fileName: string): Promise<FileUploadResult> {
+    const { type, valide, data } = await this.validateFilePart(fileName);
     if (valide) {
       const count = await this.importDBData(type, data, false);
-      return { file: file.name, valide, type, count, data };
+      return { file: fileName, valide, type, count, data };
     }
-    return { file: file.name, valide, type };
+    return { file: fileName, valide, type };
   }
 
-  protected async validateExcel(file: File, transformations: ConfigDataMappings): Promise<FileUploadResult> {
+  protected async validateExcel(fileName: string, transformations: ConfigDataMappings): Promise<FileUploadResult> {
     this.transformations = transformations;
-    const { type, valide, data } = this.parseSheet(file);
+    const { type, valide, data } = this.parseSheet(fileName);
     let mapped: unknown[] = [];
     if (valide) {
       mapped = await this.mapData(type, data);
     } else {
       // eslint-disable-next-line no-console
-      console.error('File upload not valide:', file.name);
+      console.error('File upload not valide:', fileName);
     }
-    return { file: file.name, valide, type, data: mapped };
+    return { file: fileName, valide, type, data: mapped };
   }
 
-  private parseSheet(file: File): { type: string; valide: boolean; data: unknown } {
-    this.sheetService = new SheetBufferToJson(file, this.transformations);
+  private parseSheet(fileName: string): { type: string; valide: boolean; data: unknown } {
+    this.sheetService = new SheetBufferToJson(fileName, this.transformations);
     const type = this.sheetService.getType();
     if (eq(type, DEFAULT_MAPPING_TYPES.Unknown)) {
       // eslint-disable-next-line no-console
@@ -61,5 +61,5 @@ export abstract class ReadFileService {
 
   protected abstract importDBData(type: string, data: unknown, truncate: boolean): Promise<number>;
 
-  protected abstract validateFilePart(file: File): Promise<FileUploadResult>;
+  protected abstract validateFilePart(fileName: string): Promise<FileUploadResult>;
 }

@@ -14,10 +14,10 @@ export class SheetBufferToJson {
 
   private Type: string = DEFAULT_MAPPING_TYPES.Unknown;
 
-  public constructor(buf: Buffer | File, transformations: ConfigDataMappings) {
+  public constructor(bufOrFileName: Buffer | string, transformations: ConfigDataMappings) {
     this.transformations = transformations;
     this.DetectMatch = this.transformDetection();
-    this.workBook = buf instanceof Buffer ? read(buf) : readFile(buf.name);
+    this.workBook = bufOrFileName instanceof Buffer ? read(bufOrFileName) : readFile(bufOrFileName);
   }
 
   private transformDetection(): DetectProfile[] {
